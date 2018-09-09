@@ -1,0 +1,11 @@
+{
+    "allow_change": [
+        "hello.cpp"
+    ],
+    "regexp_ban": [
+        "#include.*mutex"
+    ],
+    "tests": [
+        "test_hello"
+    ]
+}
