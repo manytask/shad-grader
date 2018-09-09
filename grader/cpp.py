@@ -7,6 +7,9 @@ class Cpp0Task(task.Task):
         super().__init__(name, **kwargs)
 
         self.tests = self.config.get("tests", [])
+        if isinstance(self.tests, str):
+            self.tests = [self.tests]
+
         self.build_dir = self.root / 'build'
 
     def grade(self, submit_root):
