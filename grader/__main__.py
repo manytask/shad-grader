@@ -10,21 +10,27 @@ import docopt
 import requests
 import time
 import os
+import subprocess
 import pathlib
 
 from .task import Task
 
 
-def push_report(user_id, task):
+def push_report(user_id, task, failed=False):
     # Do not expose token in logs.
     for _ in range(3):
-        rsp = requests.post("https://cpp.manytask.org/api/report", data={
+        data = {
             "token": os.environ["TESTER_TOKEN"],
             "task": task,
-            "user_id": user_id
-        })
+            "user_id": user_id,
+        }
 
-        if rsp.status_code != 500:
+        if failed:
+            data["failed"] = 1
+
+        rsp = requests.post("https://cpp.manytask.org/api/report", data=data)
+
+        if rsp.status_code != 500 or failed:
             break
         else:
             time.sleep(1.0)
@@ -39,12 +45,16 @@ def grade():
     user_id = os.environ["GITLAB_USER_ID"]
 
     task = Task.create(course_name, task_name, pathlib.Path("/opt/shad"))
-    task.grade(submit_root)
+    try:
+        task.grade(submit_root)
 
-    if task.review:
-        return
+        if task.review:
+            return
 
-    push_report(user_id, task_name)
+        push_report(user_id, task_name)
+    except subprocess.CalledProcessError:
+        push_report(user_id, task_name, failed=True)
+        raise
 
 
 def main():
