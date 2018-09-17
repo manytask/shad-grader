@@ -1,3 +1,5 @@
+import subprocess
+
 from . import task
 from . import sandbox
 
@@ -28,9 +30,12 @@ class Cpp0Task(task.Task):
         self.check_call(["../../run_linter.sh", self.name, "--server"], cwd=str(submit_build))
 
         for test_binary in self.tests:
-            self.check_call([str(submit_build / test_binary)],
-                            sandboxed=True,
-                            cwd=str(self.task_path))
+            try:
+                self.check_call([str(submit_build / test_binary)],
+                                sandboxed=True,
+                                cwd=str(self.task_path))
+            except subprocess.CalledProcessError:
+                raise task.TestFailed("Test process failed")
 
 
 class CppTask(task.Task):

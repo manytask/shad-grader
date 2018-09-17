@@ -13,7 +13,7 @@ import os
 import subprocess
 import pathlib
 
-from .task import Task
+from .task import Task, TestFailed
 
 
 def push_report(user_id, task, failed=False):
@@ -52,7 +52,7 @@ def grade():
             return
 
         push_report(user_id, task_name)
-    except subprocess.CalledProcessError:
+    except TestFailed:
         push_report(user_id, task_name, failed=True)
         raise
 
