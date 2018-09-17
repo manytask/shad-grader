@@ -25,6 +25,8 @@ class Cpp0Task(task.Task):
         for test_binary in self.tests:
             self.check_call(["ninja", "-v", test_binary], cwd=str(submit_build))
 
+        self.check_call(["../../run_linter.sh", self.name], cwd=str(submit_build))
+
         for test_binary in self.tests:
             self.check_call([str(submit_build / test_binary)],
                             sandboxed=True,
