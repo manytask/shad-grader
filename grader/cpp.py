@@ -13,6 +13,7 @@ class Cpp0Task(task.Task):
             self.tests = [self.tests]
 
         self.build_dir = self.root / 'build'
+        self.build_type = self.config.get("build_type", "ASAN")
 
     def grade(self, submit_root):
         self.copy_sources(submit_root)
@@ -22,7 +23,8 @@ class Cpp0Task(task.Task):
 
         sandbox.chmod(str(submit_build))
 
-        self.check_call(["cmake", "-G", "Ninja", str(self.root), "-DGRADER=YES", "-DENABLE_PRIVATE_TESTS=YES"],
+        self.check_call(["cmake", "-G", "Ninja", str(self.root),
+                        "-DGRADER=YES", "-DENABLE_PRIVATE_TESTS=YES", "-DCMAKE_BUILD_TYPE=" + self.build_type],
                         cwd=str(submit_build))
         for test_binary in self.tests:
             self.check_call(["ninja", "-v", test_binary], cwd=str(submit_build))
