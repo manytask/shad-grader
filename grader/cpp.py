@@ -3,6 +3,8 @@ import subprocess
 from . import task
 from . import sandbox
 
+import os
+
 
 class Cpp0Task(task.Task):
     def __init__(self, name, **kwargs):
@@ -27,7 +29,7 @@ class Cpp0Task(task.Task):
 
         self.check_call(["cmake", "-G", "Ninja", str(self.root),
                         "-DGRADER=YES", "-DENABLE_PRIVATE_TESTS=YES", "-DCMAKE_BUILD_TYPE=" + self.build_type],
-                        env=None if not is_coverage else {"CXX": "clang++"},
+                        env=None if not is_coverage else dict(os.environ, CXX="clang++"),
                         cwd=str(submit_build))
         for test_binary in self.tests:
             self.check_call(["ninja", "-v", test_binary], cwd=str(submit_build))
@@ -41,7 +43,7 @@ class Cpp0Task(task.Task):
                 coverage_data = test_binary + ".profdata"
                 self.check_call([str(submit_build / test_binary)],
                                 sandboxed=True,
-                                env=None if not is_coverage else {"LLVM_PROFILE_FILE": raw_coverage_path},
+                                env=None if not is_coverage else dict(os.environ, LLVM_PROFILE_FILE=raw_coverage_path),
                                 cwd=str(self.task_path))
                 if is_coverage:
                     self.check_call(["llvm-profdata", "merge", "-sparse",
