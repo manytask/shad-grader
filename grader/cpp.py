@@ -23,8 +23,11 @@ class Cpp0Task(task.Task):
 
         sandbox.chmod(str(submit_build))
 
+        is_coverage = self.build_type == "COVERAGE"
+
         self.check_call(["cmake", "-G", "Ninja", str(self.root),
                         "-DGRADER=YES", "-DENABLE_PRIVATE_TESTS=YES", "-DCMAKE_BUILD_TYPE=" + self.build_type],
+                        env=None if not is_coverage else {"CXX": "clang++"},
                         cwd=str(submit_build))
         for test_binary in self.tests:
             self.check_call(["ninja", "-v", test_binary], cwd=str(submit_build))
@@ -33,9 +36,20 @@ class Cpp0Task(task.Task):
 
         for test_binary in self.tests:
             try:
+                raw_coverage_data = test_binary + ".profraw"
+                raw_coverage_path = submit_build / raw_coverage_data
+                coverage_data = test_binary + ".profdata"
                 self.check_call([str(submit_build / test_binary)],
                                 sandboxed=True,
+                                env=None if not is_coverage else {"LLVM_PROFILE_FILE": raw_coverage_path},
                                 cwd=str(self.task_path))
+                if is_coverage:
+                    self.check_call(["llvm-profdata", "merge", "-sparse",
+                                    raw_coverage_data, "-o", coverage_data],
+                                    cwd=str(submit_build))
+                    self.check_call(["llvm-cov", "report", test_binary, "-instr-profile=" + coverage_data],
+                                    cwd=str(submit_build))
+
             except subprocess.CalledProcessError:
                 raise task.TestFailed("Test process failed")
 
