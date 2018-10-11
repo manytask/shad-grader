@@ -28,7 +28,7 @@ def push_report(user_id, task, failed=False):
         if failed:
             data["failed"] = 1
 
-        rsp = requests.post("https://cpp.manytask.org/api/report", data=data)
+        rsp = requests.post("https://os.manytask.org/api/report", data=data)
 
         if rsp.status_code != 500 or failed:
             break
@@ -44,7 +44,7 @@ def grade():
     submit_root = os.environ["CI_PROJECT_DIR"]
     user_id = os.environ["GITLAB_USER_ID"]
 
-    task = Task.create(course_name, task_name, pathlib.Path("/opt/shad"))
+    task = Task.create(course_name, task_name, pathlib.Path("."))
     try:
         task.grade(submit_root)
 
