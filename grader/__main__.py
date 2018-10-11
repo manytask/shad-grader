@@ -33,7 +33,7 @@ def push_report(user_id, task, course_name, failed=False):
         if failed:
             data["failed"] = 1
 
-        rsp = requests.post("https://os.manytask.org/api/report", data=data)
+        rsp = requests.post(url, data=data)
 
         if rsp.status_code != 500 or failed:
             break
