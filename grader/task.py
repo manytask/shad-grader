@@ -26,6 +26,10 @@ def copy_sources(submit_path, task_path, sources, check_fn=None):
                 check_fn(str(target_path))
 
 
+class TestFailed(Exception):
+    pass
+
+
 class Task:
     @classmethod
     def create(cls, course_name, name, root=None):

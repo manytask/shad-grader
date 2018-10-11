@@ -13,10 +13,15 @@ import os
 import subprocess
 import pathlib
 
-from .task import Task
+from .task import Task, TestFailed
 
 
-def push_report(user_id, task, failed=False):
+def push_report(user_id, task, course_name, failed=False):
+    if course_name.startswith("cpp"):
+        url = "https://cpp.manytask.org/api/report"
+    else:
+        url = "https://os.manytask.org/api/report"
+
     # Do not expose token in logs.
     for _ in range(3):
         data = {
@@ -51,9 +56,9 @@ def grade():
         if task.review:
             return
 
-        push_report(user_id, task_name)
-    except subprocess.CalledProcessError:
-        push_report(user_id, task_name, failed=True)
+        push_report(user_id, task_name, course_name)
+    except TestFailed:
+        push_report(user_id, task_name, course_name, failed=True)
         raise
 
 
