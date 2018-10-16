@@ -72,7 +72,7 @@ class Task:
             if not isinstance(self.sources, list):
                 self.sources = [self.sources]
 
-            self.regexp_ban = self.config.get("regexp_ban", [])
+            self.regexp_ban = self.config.get("regexp_ban", []) + self.config.get("forbidden_regexp", [])
             self.review = self.config.get("review", False)
 
     def check_call(self, cmd, sandboxed=False, **kwargs):
