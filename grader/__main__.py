@@ -49,7 +49,7 @@ def grade():
     submit_root = os.environ["CI_PROJECT_DIR"]
     user_id = os.environ["GITLAB_USER_ID"]
 
-    task = Task.create(course_name, task_name, pathlib.Path("."))
+    task = Task.create(course_name, task_name, pathlib.Path("/opt/shad"))
     try:
         task.grade(submit_root)
 
