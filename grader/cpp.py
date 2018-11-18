@@ -11,6 +11,7 @@ class Cpp0Task(task.Task):
         super().__init__(name, **kwargs)
 
         self.tests = self.config.get("tests", [])
+        self.need_lint = self.config.get("linter", True)
         if isinstance(self.tests, str):
             self.tests = [self.tests]
 
@@ -33,8 +34,9 @@ class Cpp0Task(task.Task):
                         cwd=str(submit_build))
         for test_binary in self.tests:
             self.check_call(["ninja", "-v", test_binary], cwd=str(submit_build))
-
-        self.check_call(["../../run_linter.sh", self.name, "--server"], cwd=str(submit_build))
+        
+        if self.need_lint:
+            self.check_call(["../../run_linter.sh", self.name, "--server"], cwd=str(submit_build))
 
         for test_binary in self.tests:
             try:
