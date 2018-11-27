@@ -41,6 +41,7 @@ class Cpp0Task(task.Task):
 
         if self.test_script:
             self.check_call([str(self.task_path / self.test_script)],
+                            cwd=str(self.task_path),
                             sandboxed=True)
             return
 
