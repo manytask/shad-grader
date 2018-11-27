@@ -17,6 +17,7 @@ class Cpp0Task(task.Task):
 
         self.build_dir = self.root / 'build'
         self.build_type = self.config.get("build_type", "ASAN")
+        self.test_script = self.config.get("test_script")
 
     def grade(self, submit_root):
         self.copy_sources(submit_root)
@@ -37,6 +38,11 @@ class Cpp0Task(task.Task):
         
         if self.need_lint:
             self.check_call(["../../run_linter.sh", self.name, "--server"], cwd=str(submit_build))
+
+        if self.test_script:
+            self.check_call([str(self.task_path / test_script)],
+                            sandboxed=True)
+            return
 
         for test_binary in self.tests:
             try:
