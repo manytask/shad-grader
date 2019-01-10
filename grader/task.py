@@ -39,6 +39,9 @@ class Task:
         elif course_name.startswith("os-fall"):
             from . import os
             return os.OsTask(name, root=root)
+        elif course_name.startswith("hse"):
+            from . import hse
+            return hse.HsePyTask(name, root=root)
         else:
             raise ValueError("Unexpected course name '{}'".format(course_name))
 
@@ -58,12 +61,12 @@ class Task:
 
         return tasks
 
-    def __init__(self, name, root=pathlib.Path('.')):
+    def __init__(self, name, root=None):
         self.name = name
 
-        self.root = root
-        self.task_path = root / name
-        self.task_private_path = root / 'private' / name
+        self.root = root or pathlib.Path('.')
+        self.task_path = self.root / name
+        self.task_private_path = self.root / 'private' / name
 
         with (self.task_path / ".tester.json").open() as f:
             self.config = json.load(f)
