@@ -99,7 +99,7 @@ class CppTask(task.Task):
         for build_type in self.build_types:
             release_build = build_type == "RELWITHDEBINFO"
 
-            submit_build = self.build_dir / "submit" / build_type
+            submit_build = self.build_dir / build_type
             submit_build.mkdir(exist_ok=True, parents=True)
             sandbox.chmod(str(submit_build))
 
