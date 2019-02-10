@@ -36,6 +36,9 @@ class Task:
         if course_name.startswith("cpp-fall"):
             from . import cpp
             return cpp.Cpp0Task(name, root=root)
+        elif course_name.startswith("cpp-spring"):
+            from . import cpp
+            return cpp.CppTask(name, root=root)
         elif course_name.startswith("os-fall"):
             from . import os
             return os.OsTask(name, root=root)
