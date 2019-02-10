@@ -96,13 +96,12 @@ class CppTask(task.Task):
     def grade(self, submit_root):
         self.copy_sources(submit_root)
 
-        sandbox.chmod(str(submit_build))
-
         for build_type in self.build_types:
             release_build = build_type == "RELWITHDEBINFO"
-            
+
             submit_build = self.build_dir / "submit" / build_type
             submit_build.mkdir(exist_ok=True, parents=True)
+            sandbox.chmod(str(submit_build))
 
             self.check_call(["cmake", "-G", "Ninja", str(self.root),
                             "-DGRADER=YES", "-DENABLE_PRIVATE_TESTS=YES", "-DCMAKE_BUILD_TYPE=" + build_type],
