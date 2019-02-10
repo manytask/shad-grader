@@ -105,7 +105,6 @@ class CppTask(task.Task):
 
             self.check_call(["cmake", "-G", "Ninja", str(self.root),
                             "-DGRADER=YES", "-DENABLE_PRIVATE_TESTS=YES", "-DCMAKE_BUILD_TYPE=" + build_type],
-                            env=None if not is_coverage else dict(os.environ, CXX="clang++-7"),
                             cwd=str(submit_build))
 
             for test_binary in self.tests + self.benchmarks:
