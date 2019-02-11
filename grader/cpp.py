@@ -79,7 +79,7 @@ class CppTask(task.Task):
         
         self.need_lint = self.config.get("linter", True)
 
-        self.build_dir = self.root / 'build'
+        self.build_root = self.root / 'build'
         self.test_script = self.config.get("test_script")
 
         self.disable_asan = self.config.get("disable_asan", False)
@@ -96,7 +96,7 @@ class CppTask(task.Task):
         self.scorer = self.config.get("scorer", None)
 
     def build_dir(self, build_type, test_solution=False):
-        return self.build_dir / (build_type + ("_baseline" if test_solution else "")) 
+        return self.build_root / (build_type + ("_baseline" if test_solution else "")) 
     
     def build(self, build_type, test_solution=False):
         build_dir = self.build_dir(build_type, test_solution)
