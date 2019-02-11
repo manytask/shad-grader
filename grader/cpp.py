@@ -142,7 +142,7 @@ class CppTask(task.Task):
 
             build_dir = self.build_dir(build_type)
 
-            self.build(build_type, test_solution=True)
+            self.build(build_type, test_solution=False)
 
             if release_build and self.need_lint:
                 self.check_call(["../../run_linter.sh", self.name, "--server"], cwd=str(build_dir))
