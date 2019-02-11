@@ -163,8 +163,8 @@ class CppTask(task.Task):
 
                     self.check_call([
                         str(self.task_path / self.scorer),
-                        str(self.report_file(bench_binary, "release", False)),
-                        str(self.report_file(bench_binary, "release", True))
+                        str(self.report_file(bench_binary, build_type, False)),
+                        str(self.report_file(bench_binary, build_type, True))
                     ], cwd=str(self.task_path))
             except subprocess.CalledProcessError:
                 raise task.TestFailed("Test process failed")
