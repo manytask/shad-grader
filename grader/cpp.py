@@ -100,9 +100,9 @@ class CppTask(task.Task):
     
     def build(self, build_type, test_solution=False):
         build_dir = self.build_dir(build_type, test_solution)
-        submit_build.mkdir(exist_ok=True, parents=True)
+        build_dir.mkdir(exist_ok=True, parents=True)
         if not test_solution:
-            sandbox.chmod(str(submit_build))
+            sandbox.chmod(str(build_dir))
 
         cmake_cmd = [
             "cmake", "-G", "Ninja", str(self.root),
@@ -111,10 +111,10 @@ class CppTask(task.Task):
         if test_solution:
             cmake_cmd.append("-DTEST_SOLUTION=YES")
             
-        self.check_call(cmake_cmd, cwd=str(submit_build), sandboxed=not test_solution)
+        self.check_call(cmake_cmd, cwd=str(build_dir), sandboxed=not test_solution)
 
         for test_binary in self.tests + self.benchmarks:
-            self.check_call(["ninja", "-v", test_binary], cwd=str(submit_build), sandboxed=not test_solution)
+            self.check_call(["ninja", "-v", test_binary], cwd=str(build_dir), sandboxed=not test_solution)
 
     def report_file(self, benchmark, test_solution):
         return self.build_dir("release", test_solution) / "{}-report.json".format(benchmark)
@@ -143,7 +143,7 @@ class CppTask(task.Task):
             build_dir = self.build_dir(build_type)
 
             if release_build and self.need_lint:
-                self.check_call(["../../run_linter.sh", self.name, "--server"], cwd=str(submit_build))
+                self.check_call(["../../run_linter.sh", self.name, "--server"], cwd=str(build_dir))
 
             try:
                 for test_binary in self.tests:
