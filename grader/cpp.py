@@ -87,44 +87,83 @@ class CppTask(task.Task):
 
         self.build_types = []
         if not self.disable_asan:
-            self.build_types += ["ASAN"]
+            self.build_types += ["asan"]
         if not self.disable_tsan:
-            self.build_types += ["TSAN"]
+            self.build_types += ["tsan"]
 
-        self.build_types += ["RELWITHDEBINFO"]
+        self.build_types += ["relwithdebinfo"]
+
+        self.scorer = self.config.get("scorer", None)
+
+    def build_dir(self, build_type, test_solution=False):
+        return self.build_dir / (build_type + ("_baseline" if test_solution else "")) 
+    
+    def build(self, build_type, test_solution=False):
+        build_dir = self.build_dir(build_type, test_solution)
+        submit_build.mkdir(exist_ok=True, parents=True)
+        if not test_solution:
+            sandbox.chmod(str(submit_build))
+
+        cmake_cmd = [
+            "cmake", "-G", "Ninja", str(self.root),
+            "-DGRADER=YES", "-DENABLE_PRIVATE_TESTS=YES", "-DCMAKE_BUILD_TYPE=" + build_type
+        ]
+        if test_solution:
+            cmake_cmd.append("-DTEST_SOLUTION=YES")
+            
+        self.check_call(cmake_cmd, cwd=str(submit_build), sandboxed=not test_solution)
+
+        for test_binary in self.tests + self.benchmarks:
+            self.check_call(["ninja", "-v", test_binary], cwd=str(submit_build), sandboxed=not test_solution)
+
+    def report_file(self, benchmark, test_solution):
+        return self.build_dir("release", test_solution) / "{}-report.json".format(benchmark)
+
+    def run_test(self, test, build_type):
+        self.check_call([str(self.build_dir(build_type) / test)],
+            sandboxed = True,
+            cwd=str(self.task_path))
+    
+    def run_benchmark(self, benchmark, build_type, test_solution):
+        build_dir = self.build_dir(build_type, test_solution)
+        report = self.report_file(benchmark, build_type, test_solution)
+        
+        self.check_call([str(build_dir / benchmark), "--benchmark_out="+str(report)],
+            sandboxed=not test_solution,
+            cwd=str(self.task_path))
 
     def grade(self, submit_root):
         self.copy_sources(submit_root)
 
+        self.build("relwithdebinfo", test_solution=True)
+        
         for build_type in self.build_types:
-            release_build = build_type == "RELWITHDEBINFO"
+            release_build = build_type == "relwithdebinfo"
 
-            submit_build = self.build_dir / build_type
-            submit_build.mkdir(exist_ok=True, parents=True)
-            sandbox.chmod(str(submit_build))
+            build_dir = self.build_dir(build_type)
 
-            self.check_call(["cmake", "-G", "Ninja", str(self.root),
-                            "-DGRADER=YES", "-DENABLE_PRIVATE_TESTS=YES", "-DCMAKE_BUILD_TYPE=" + build_type],
-                            cwd=str(submit_build))
-
-            for test_binary in self.tests + self.benchmarks:
-                self.check_call(["ninja", "-v", test_binary], cwd=str(submit_build))
-                
             if release_build and self.need_lint:
                 self.check_call(["../../run_linter.sh", self.name, "--server"], cwd=str(submit_build))
 
             try:
                 for test_binary in self.tests:
-                    self.check_call([str(submit_build / test_binary)],
-                        sandboxed=True,
-                        cwd=str(self.task_path))
+                    self.run_test(test_binary, build_type)
 
-                if release_build:
-                    for bench_binary in self.benchmarks:
-                        self.check_call([str(submit_build / bench_binary)],
-                            sandboxed=True,
-                            cwd=str(self.task_path))
+                if not release_build:
+                    continue
 
+                for bench_binary in self.benchmarks:
+                    self.run_benchmark(bench_binary, build_type, test_solution=False)
+                    self.run_benchmark(bench_binary, build_type, test_solution=True)
+
+                    if self.scorer is None:
+                        continue
+
+                    self.check_call([
+                        str(self.task_path / self.scorer),
+                        str(self.report_file(benchmark, "release", False)),
+                        str(self.report_file(benchmark, "release", True))
+                    ], cwd=str(self.task_path))
             except subprocess.CalledProcessError:
                 raise task.TestFailed("Test process failed")
 
