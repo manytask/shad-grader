@@ -116,8 +116,8 @@ class CppTask(task.Task):
         for test_binary in self.tests + self.benchmarks:
             self.check_call(["ninja", "-v", test_binary], cwd=str(build_dir), sandboxed=not test_solution)
 
-    def report_file(self, benchmark, test_solution):
-        return self.build_dir("release", test_solution) / "{}-report.json".format(benchmark)
+    def report_file(self, benchmark, build_type, test_solution):
+        return self.build_dir(build_type, test_solution) / "{}-report.json".format(benchmark)
 
     def run_test(self, test, build_type):
         self.check_call([str(self.build_dir(build_type) / test)],
