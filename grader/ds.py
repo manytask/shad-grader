@@ -9,8 +9,8 @@ class DsTask(task.Task):
         self.copy_sources(submit_root)
 
         self.check_call(["go", "test",
-                         "-c", "test.run",
-                         "-tags", "private"
+                         "-c", "-o", "test.run",
+                         "-tags", "private",
                          "gitlab.com/slon/shad-ds/" + self.name])
 
-        self.check_call(["./test.run", "-v"], sandboxed=True, timeout=60)
+        self.check_call(["./test.run", "-test.v"], sandboxed=True, timeout=60)
