@@ -45,6 +45,9 @@ class Task:
         elif course_name.startswith("hse"):
             from . import hse
             return hse.HsePyTask(name, root=root)
+        elif course_name.startswith("ds"):
+            from . import ds
+            return ds.DsTask(name, root=root)
         else:
             raise ValueError("Unexpected course name '{}'".format(course_name))
 
