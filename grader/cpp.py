@@ -84,6 +84,7 @@ class CppTask(task.Task):
 
         self.disable_asan = self.config.get("disable_asan", False)
         self.disable_tsan = self.config.get("disable_tsan", False)
+        self.build_baseline = self.config.get("build_baseline", True)
 
         self.build_types = []
         if not self.disable_asan:
@@ -135,7 +136,8 @@ class CppTask(task.Task):
     def grade(self, submit_root):
         self.copy_sources(submit_root)
 
-        self.build("relwithdebinfo", test_solution=True)
+        if self.build_baseline:
+            self.build("relwithdebinfo", test_solution=True)
         
         for build_type in self.build_types:
             release_build = build_type == "relwithdebinfo"
