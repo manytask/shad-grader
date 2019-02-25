@@ -19,7 +19,7 @@ from .task import Task, TestFailed
 def push_report(user_id, task, course_name, failed=False):
     if course_name.startswith("cpp"):
         url = "https://cpp.manytask.org/api/report"
-    if course_name.startswith("ds"):
+    elif course_name.startswith("ds"):
         url = "https://ds.manytask.org/api/report"
     elif course_name.startswith("hse"):
         url = "https://hse-programming-intro.manytask.org/api/report"
