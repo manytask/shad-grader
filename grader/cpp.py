@@ -4,6 +4,9 @@ from . import task
 from . import sandbox
 
 import os
+import sys
+import json
+import pathlib
 
 
 class Cpp0Task(task.Task):
@@ -171,3 +174,40 @@ class CppTask(task.Task):
             except subprocess.CalledProcessError:
                 raise task.TestFailed("Test process failed")
 
+
+class CppCactusTask:
+    def __init__(self, name, root=None):
+        self.name = name
+        self.root = root
+        self.review = False
+        with (self.root / ".tester.json").open() as f:
+            self.config = json.load(f)
+
+        if name not in self.config:
+            raise ValueError("unknown task name: {}".format(name))
+
+    def check_call(self, cmd, sandboxed=False, **kwargs):
+        sys.stderr.write("> {}{} {}\n".format(
+            "" if "cwd" not in kwargs else "cd {} && ".format(kwargs["cwd"]),
+            "sandbox" if sandboxed else "",
+            " ".join(cmd),
+        ))
+        sys.stderr.flush()
+
+        if sandboxed:
+            sandbox.check_call(cmd, **kwargs)
+        else:
+            subprocess.check_call(cmd, **kwargs)
+
+    def grade(self, submit_root):
+        build_dir = pathlib.Path(submit_root) / "build"
+        build_dir.mkdir(exist_ok=True, parents=True)
+
+        self.check_call([
+            "cmake", "-G", "Ninja",
+            str(submit_root),
+            "-DCMAKE_BUILD_TYPE=ASAN"],
+            cwd=str(build_dir))
+
+        self.check_call(["ninja", self.config[self.name]["target"]],
+            cwd=str(build_dir))

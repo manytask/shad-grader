@@ -38,6 +38,8 @@ class Task:
             return cpp.Cpp0Task(name, root=root)
         elif course_name.startswith("cpp-spring"):
             from . import cpp
+            if root is not None and (root / "cactus").exists():
+                return cpp.CppCactusTask(name, root=root)
             return cpp.CppTask(name, root=root)
         elif course_name.startswith("os-fall"):
             from . import os
