@@ -210,4 +210,5 @@ class CppCactusTask:
             cwd=str(build_dir))
 
         self.check_call(["ninja", self.config[self.name]["target"]],
-            cwd=str(build_dir))
+            cwd=str(build_dir),
+            timeout=60)
