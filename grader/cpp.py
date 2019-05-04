@@ -153,6 +153,12 @@ class CppTask(task.Task):
                 self.check_call(["../../run_linter.sh", self.name, "--server"], cwd=str(build_dir))
 
             try:
+                if self.test_script:
+                    self.check_call([str(self.task_path / self.test_script)],
+                                    cwd=str(self.task_path),
+                                    sandboxed=True)
+                    return
+
                 for test_binary in self.tests:
                     self.run_test(test_binary, build_type)
 
