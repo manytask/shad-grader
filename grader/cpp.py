@@ -30,7 +30,10 @@ class Cpp0Task(task.Task):
 
         sandbox.chmod(str(submit_build))
 
-        is_coverage = self.build_type == "COVERAGE"
+        is_coverage = self.build_type.startsWith("COVERAGE")
+        min_coverage_value = None
+        if is_coverage and ':' in self.build_type:
+            self.build_type, min_coverage_value = self.build_type.split(':')
 
         self.check_call(["cmake", "-G", "Ninja", str(self.root),
                         "-DGRADER=YES", "-DENABLE_PRIVATE_TESTS=YES", "-DCMAKE_BUILD_TYPE=" + self.build_type],
@@ -38,7 +41,7 @@ class Cpp0Task(task.Task):
                         cwd=str(submit_build))
         for test_binary in self.tests:
             self.check_call(["ninja", "-v", test_binary], cwd=str(submit_build))
-        
+
         if self.need_lint:
             self.check_call(["../../run_linter.sh", self.name, "--server"], cwd=str(submit_build))
 
@@ -61,8 +64,18 @@ class Cpp0Task(task.Task):
                     self.check_call(["llvm-profdata", "merge", "-sparse",
                                     raw_coverage_data, "-o", coverage_data],
                                     cwd=str(submit_build))
-                    self.check_call(["llvm-cov", "report", test_binary, "-instr-profile=" + coverage_data],
-                                    cwd=str(submit_build))
+                    if not min_coverage_value:
+                        self.check_call(["llvm-cov", "report", test_binary, "-instr-profile=" + coverage_data],
+                                        cwd=str(submit_build))
+                    else:
+                        coverage_report_path = os.path.join(submit_build, 'coverage.json')
+                        with open(coverage_report_path, 'w') as fout:
+                            self.check_call(["llvm-cov", "export", test_binary, "-instr-profile=" + coverage_data,
+                                            "-summary-only", "-format=text"],
+                                            stdout=fout,
+                                            cwd=str(submit_build))
+                        self.check_call(["python3", "check_coverage.py", min_coverage_value, coverage_report_path],
+                                        cwd=str(self.task_path))
 
             except subprocess.CalledProcessError:
                 raise task.TestFailed("Test process failed")
