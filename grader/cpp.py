@@ -30,7 +30,7 @@ class Cpp0Task(task.Task):
 
         sandbox.chmod(str(submit_build))
 
-        is_coverage = self.build_type.startsWith("COVERAGE")
+        is_coverage = self.build_type.startswith("COVERAGE")
         min_coverage_value = None
         if is_coverage and ':' in self.build_type:
             self.build_type, min_coverage_value = self.build_type.split(':')
