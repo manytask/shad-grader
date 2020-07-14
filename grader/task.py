@@ -47,6 +47,9 @@ class Task:
         elif course_name.startswith("db-spring"):
             from . import db
             return db.DbTask(name, root=root)
+        elif course_name.startswith("ema-fall"):
+            from . import ema
+            return ema.EmaTask(name, root=root)
         elif course_name.startswith("hse"):
             from . import hse
             return hse.HsePyTask(name, root=root)
