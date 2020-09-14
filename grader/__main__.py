@@ -23,6 +23,10 @@ def push_report(user_id, task, course_name, failed=False):
         url = "https://cpp0.manytask.org/api/report"
     elif course_name.startswith("ds"):
         url = "https://ds.manytask.org/api/report"
+    elif course_name.startswith("db"):
+        url = "https://db.manytask.org/api/report"
+    elif course_name.startswith("ema"):
+        url = "https://ema.manytask.org/api/report"
     elif course_name.startswith("hse"):
         url = "https://hse-programming-intro.manytask.org/api/report"
     else:
