@@ -15,4 +15,4 @@ class DsTask(task.Task):
                          "-tags", "private",
                          "gitlab.com/slon/shad-ds/" + self.name])
 
-        self.check_call(["./test.run", "-test.v"], sandboxed=True, timeout=900)
+        self.check_call(["./test.run", "-test.v", "-test.zaploglevel=info"], sandboxed=True, timeout=900)
