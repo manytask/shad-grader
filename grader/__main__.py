@@ -68,6 +68,8 @@ def grade():
 
         push_report(user_id, task_name, course_name)
     except TestFailed:
+        task.save_artifacts(submit_root)
+
         push_report(user_id, task_name, course_name, failed=True)
         raise
 

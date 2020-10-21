@@ -81,6 +81,7 @@ class Task:
         self.root = root or pathlib.Path('.')
         self.task_path = self.root / name
         self.task_private_path = self.root / 'private' / name
+        os.mkdir("/tmp/artifacts")
 
         with (self.task_path / ".tester.json").open() as f:
             self.config = json.load(f)
@@ -124,6 +125,9 @@ class Task:
     @abc.abstractmethod
     def grade(self, submit_root: pathlib.Path):
         pass
+
+    def save_artifacts(self, submit_root):
+        shutil.copytree("/tmp/artifacts", str(self.submit_root / "artifacts"))
 
     def check(self):
         for regex in self.regexp_ban:
