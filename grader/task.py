@@ -127,7 +127,7 @@ class Task:
         pass
 
     def save_artifacts(self, submit_root):
-        shutil.copytree("/tmp/artifacts", str(self.submit_root / "artifacts"))
+        shutil.copytree("/tmp/artifacts", str(submit_root / "artifacts"))
 
     def check(self):
         for regex in self.regexp_ban:
