@@ -15,7 +15,7 @@ from . import sandbox
 def copy_sources(submit_path, task_path, sources, check_fn=None):
     if not submit_path.exists():
         raise RuntimeError("Directory '{}' does not exists".format(submit_path))
-    
+
     for pattern in sources:
         for file in submit_path.glob(pattern):
             target_path = task_path / file.relative_to(submit_path)

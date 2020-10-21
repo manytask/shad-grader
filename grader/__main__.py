@@ -58,12 +58,13 @@ def grade():
     course_name = os.environ["CI_PROJECT_NAMESPACE"]
     submit_root = os.environ["CI_PROJECT_DIR"]
     user_id = os.environ["GITLAB_USER_ID"]
+    skip_report = "SKIP_REPORT" in os.environ
 
     task = Task.create(course_name, task_name, pathlib.Path("/opt/shad"))
     try:
         task.grade(submit_root)
 
-        if task.review:
+        if task.review or skip_report:
             return
 
         push_report(user_id, task_name, course_name)

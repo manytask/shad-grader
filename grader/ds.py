@@ -8,9 +8,11 @@ class DsTask(task.Task):
     def grade(self, submit_root):
         self.copy_sources(submit_root)
 
+        self.check_call(["make", "-C", self.name])
+
         self.check_call(["go", "test",
                          "-c", "-o", "test.run",
                          "-tags", "private",
                          "gitlab.com/slon/shad-ds/" + self.name])
 
-        self.check_call(["./test.run", "-test.v"], sandboxed=True, timeout=900)
+        self.check_call(["./test.run", "-test.v", "-test.zaploglevel=info"], sandboxed=True, timeout=900)
