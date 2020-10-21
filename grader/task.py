@@ -82,6 +82,7 @@ class Task:
         self.task_path = self.root / name
         self.task_private_path = self.root / 'private' / name
         os.mkdir("/tmp/artifacts")
+        os.chmod("/tmp/artifacts", 0o777)
 
         with (self.task_path / ".tester.json").open() as f:
             self.config = json.load(f)
