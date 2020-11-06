@@ -11,3 +11,6 @@ class EmaTask(task.Task):
         self.check_call(["../private/{}/test.sh".format(self.name)],
                         cwd=str(self.root / self.name),
                         timeout=10800)
+
+        shutil.copytree("/tmp/artifacts", str(pathlib.Path(submit_root) / "artifacts"))
+
