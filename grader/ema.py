@@ -1,5 +1,6 @@
 from . import task
 import shutil
+import pathlib
 
 
 class EmaTask(task.Task):
