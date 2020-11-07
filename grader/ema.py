@@ -1,4 +1,5 @@
 from . import task
+import shutil
 
 
 class EmaTask(task.Task):
