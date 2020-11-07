@@ -10,8 +10,6 @@ class EmaTask(task.Task):
     def grade(self, submit_root):
         self.copy_sources(submit_root)
 
-        self.check_call(["../private/{}/test.sh".format(self.name)],
+        self.check_call(["../private/{}/test.sh".format(self.name), submit_root],
                         cwd=str(self.root / self.name),
                         timeout=10800)
-
-        shutil.copytree("/tmp/artifacts", str(pathlib.Path(submit_root) / "artifacts"))
