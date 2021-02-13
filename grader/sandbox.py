@@ -8,7 +8,7 @@ import traceback
 import contextlib
 
 
-ENV_WHITELIST = ["PATH"]
+ENV_WHITELIST = ["PATH", "GOCACHE"]
 TIMEOUT_SECONDS = 60
 
 
