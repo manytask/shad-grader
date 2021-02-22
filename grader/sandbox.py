@@ -27,7 +27,8 @@ def clean_env():
     env = os.environ.copy()
     os.environ.clear()
     for variable in ENV_WHITELIST:
-        os.environ[variable] = env[variable]
+        if variable in env:
+            os.environ[variable] = env[variable]
 
 
 def setup_sandbox():
