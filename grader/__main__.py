@@ -19,6 +19,8 @@ from .task import Task, TestFailed
 def push_report(user_id, task, course_name, failed=False):
     if course_name.startswith("cpp-spring"):
         url = "https://cpp.manytask.org/api/report"
+    elif course_name.startswith("cpp-fall-nn"):
+        url = "https://cpp0-nn.manytask.org/api/report"
     elif course_name.startswith("cpp-fall"):
         url = "https://cpp0.manytask.org/api/report"
     elif course_name.startswith("ds"):
