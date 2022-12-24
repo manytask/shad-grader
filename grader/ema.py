@@ -12,4 +12,4 @@ class EmaTask(task.Task):
 
         self.check_call(["../private/{}/test.sh".format(self.name), submit_root],
                         cwd=str(self.root / self.name),
-                        timeout=10800)
+                        timeout=18000)
