@@ -44,7 +44,7 @@ class Task:
         elif course_name.startswith("os-fall"):
             from . import os
             return os.OsTask(name, root=root)
-        elif course_name.startswith("db-spring"):
+        elif course_name.startswith("db"):
             from . import db
             return db.DbTask(name, root=root)
         elif course_name.startswith("ema-fall"):
