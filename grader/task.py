@@ -47,6 +47,9 @@ class Task:
         elif course_name.startswith("db"):
             from . import db
             return db.DbTask(name, root=root)
+        elif course_name.startswith("sre"):
+            from . import sre
+            return sre.SreTask(name, root=root)
         elif course_name.startswith("ema-fall"):
             from . import ema
             return ema.EmaTask(name, root=root)
