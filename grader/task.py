@@ -50,7 +50,7 @@ class Task:
         elif course_name.startswith("sre"):
             from . import sre
             return sre.SreTask(name, root=root)
-        elif course_name.startswith("ema-fall"):
+        elif course_name.startswith("ema"):
             from . import ema
             return ema.EmaTask(name, root=root)
         elif course_name.startswith("hse"):
