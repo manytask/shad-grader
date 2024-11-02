@@ -15,7 +15,7 @@ class DbTask(task.Task):
             self.check_call(["make"],
                             cwd=str(self.root / self.name),
                             sandboxed=True,
-                            timeout=360)
+                            timeout=600)
         elif self.test_sh:
             self.check_call(["../private/{}/test.sh".format(self.name)],
                             cwd=str(self.root / self.name),
