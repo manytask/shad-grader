@@ -32,7 +32,7 @@ def push_report(user_id, task, course_name, failed=False):
     elif course_name.startswith("db"):
         url = "https://db.manytask.org/api/report"
     elif course_name.startswith("sre"):
-        url = "https://sre.manytask.org/api/report"
+        url = "https://app.manytask.org/api/sre-2025-fall/report"
     elif course_name.startswith("hsedb"):
         url = "https://hsedb.manytask.org/api/report"
     elif course_name.startswith("ema"):
