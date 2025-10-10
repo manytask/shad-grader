@@ -87,7 +87,7 @@ class Task:
         os.mkdir("/tmp/artifacts")
         os.chmod("/tmp/artifacts", 0o777)
 
-        with (self.task_path / ".tester.json").open() as f:
+        with (self.task_private_path / ".tester.json").open() as f:
             self.config = json.load(f)
 
             self.sources = self.config["allow_change"]
