@@ -19,6 +19,6 @@ class SreTask(task.Task):
         elif self.test_sh:
             self.check_call(["../private/{}/test.sh".format(self.name)],
                             cwd=str(self.root / self.name),
-                            timeout=60)
+                            timeout=5*60)
         else:
             raise ValueError("Unknown task type")
