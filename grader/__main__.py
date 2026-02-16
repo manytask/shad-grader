@@ -29,6 +29,8 @@ def push_report(user_id, task, course_name, failed=False):
         url = "https://db2.manytask.org/api/report"
     elif course_name.startswith("db1"):
         url = "https://app.manytask.org/api/db1-2025-fall/report"
+    elif course_name.startswith("db2"):
+        url = "https://app.manytask.org/api/db2-2026-spring/report"
     elif course_name.startswith("db"):
         url = "https://db.manytask.org/api/report"
     elif course_name.startswith("sre"):
